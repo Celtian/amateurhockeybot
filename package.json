@@ -1,6 +1,6 @@
 {
   "name": "amateurhockeybot",
-  "version": "0.3.2",
+  "version": "0.0.0",
   "description": "Library for scraping hockey data from the internet",
   "main": "index.js",
   "scripts": {
