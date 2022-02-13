@@ -6,7 +6,7 @@ import distPackage from '../dist/package.json';
 const pkg: Record<string, any> = distPackage;
 
 pkg.publishConfig = {};
-pkg.name = '@celtian/AmateurHockeyBot';
+pkg.name = '@celtian/amateurhockeybot';
 pkg.publishConfig.registry = 'https://npm.pkg.github.com';
 
 writeFileSync(join(__dirname, '..', 'dist', 'package.json'), JSON.stringify(pkg, null, 2));
