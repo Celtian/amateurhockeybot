@@ -1,17 +1,17 @@
-import { AmateurHockeyBotLNSkutecClient } from '../../src/clients/lnskutec';
-import { MATCH_DATA, MATCH_HTML } from '../mocks/lnskutec/match';
-import { MATCH_LIST_DATA, MATCH_LIST_HTML } from '../mocks/lnskutec/match-list';
+import { AmateurHockeyBotCHHLClient } from '../../src/clients';
+import { MATCH_DATA, MATCH_HTML } from '../mocks/chhl/match';
+import { MATCH_LIST_DATA, MATCH_LIST_HTML } from '../mocks/chhl/match-list';
 
 describe('AmateurHockeyBotLNSkutecClient', () => {
-  let client: AmateurHockeyBotLNSkutecClient;
+  let client: AmateurHockeyBotCHHLClient;
 
   beforeEach(() => {
-    client = new AmateurHockeyBotLNSkutecClient();
+    client = new AmateurHockeyBotCHHLClient();
   });
 
   describe('matchListUrl', () => {
     it('should return correct value', () => {
-      expect(client.matchListUrl('2925')).toEqual('http://www.lnskutec.cz/?page_id=2925');
+      expect(client.matchListUrl('1')).toEqual('http://www.chhl.cz/zapasy.php?sezona=1');
     });
 
     it('should return undefined', () => {
@@ -23,7 +23,7 @@ describe('AmateurHockeyBotLNSkutecClient', () => {
 
   describe('matchUrl', () => {
     it('should return correct value', () => {
-      expect(client.matchUrl('3246')).toEqual('http://www.lnskutec.cz/?sp_event=3246');
+      expect(client.matchUrl('1')).toEqual('http://www.chhl.cz/zapasy.php?report=1');
     });
 
     it('should return undefined', () => {
@@ -35,7 +35,7 @@ describe('AmateurHockeyBotLNSkutecClient', () => {
 
   describe('matchList', () => {
     beforeEach(() => {
-      const handleSpy = jest.spyOn(AmateurHockeyBotLNSkutecClient.prototype as any, 'fetchPage');
+      const handleSpy = jest.spyOn(AmateurHockeyBotCHHLClient.prototype as any, 'fetchPage');
       handleSpy.mockImplementation(() => {
         return new Promise((resolve) => {
           resolve(MATCH_LIST_HTML);
@@ -50,7 +50,7 @@ describe('AmateurHockeyBotLNSkutecClient', () => {
 
   describe('match', () => {
     beforeEach(() => {
-      const handleSpy = jest.spyOn(AmateurHockeyBotLNSkutecClient.prototype as any, 'fetchPage');
+      const handleSpy = jest.spyOn(AmateurHockeyBotCHHLClient.prototype as any, 'fetchPage');
       handleSpy.mockImplementation(() => {
         return new Promise((resolve) => {
           resolve(MATCH_HTML);
@@ -62,4 +62,4 @@ describe('AmateurHockeyBotLNSkutecClient', () => {
       expect(await client.match('62')).toEqual(MATCH_DATA);
     });
   });
-});
+})

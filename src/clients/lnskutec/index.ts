@@ -5,74 +5,25 @@ import {
   coercePoints,
   coerceScore
 } from '../../helpers';
-import { AmateurHockeyBotResponse } from '../../shared';
+import { AmateurHockeyBotMatchListResponse, AmateurHockeyBotMatchPlayer, AmateurHockeyBotMatchResponse } from '../../types';
 import { AmateurHockeyBotClient } from '../shared';
 
 const BASE_URL = 'http://www.lnskutec.cz';
 
-export interface LNSkutecPlayer {
-  name: string;
-  jerseyNumber?: number;
-  goals: number;
-  assists: number;
-  penalty2: number;
-  penalty4: number;
-  penalty5ok: number;
-  penalty10: number;
-  penaltyok: number;
-}
-
-export interface LNSkutecInfo {
-  teamHome: string;
-  teamAway: string;
-  datetime: string;
-  competition: string;
-  season: string;
-}
-
-export interface LNSkutecResults {
-  scoreTotalHome: number;
-  scoreTotalAway: number;
-  scorePeriodFirstAway: number;
-  scorePeriodFirstHome: number;
-  scorePeriodSecondAway: number;
-  scorePeriodSecondHome: number;
-  scorePeriodThirdHome: number;
-  scorePeriodThirdAway: number;
-  scoreOvertimeHome?: number;
-  scoreOvertimeAway?: number;
-  scoreResultHome: string;
-  scoreResultAway: string;
-}
-
-export interface LNSkutecMatch {
-  info: LNSkutecInfo;
-  results?: LNSkutecResults;
-  homePlayers: LNSkutecPlayer[];
-  awayPlayers: LNSkutecPlayer[];
-}
-
-export interface LNSkutecMatchList {
-  id: string;
-  teamHome: string;
-  teamAway: string;
-  datetime: string;
-}
-
 export class AmateurHockeyBotLNSkutecClient extends AmateurHockeyBotClient {
-  public matchListUrl(pageId: string): string {
-    return pageId ? `${BASE_URL}/?page_id=${pageId}` : undefined;
+  public matchListUrl(id: string): string {
+    return id ? `${BASE_URL}/?page_id=${id}` : undefined;
   }
 
-  public matchUrl(spEvent: string): string {
-    return spEvent ? `${BASE_URL}/?sp_event=${spEvent}` : undefined;
+  public matchUrl(id: string): string {
+    return id ? `${BASE_URL}/?sp_event=${id}` : undefined;
   }
 
   public async matchList(
-    pageId: string
-  ): Promise<AmateurHockeyBotResponse<LNSkutecMatchList[]>> {
+    id: string
+  ): Promise<AmateurHockeyBotMatchListResponse> {
     try {
-      const html = await this.fetchPage(this.matchListUrl(pageId));
+      const html = await this.fetchPage(this.matchListUrl(id));
       const virtualNode = this.nodeDOM(html);
       const items = this.selectArray(virtualNode, 'main table > tbody > tr');
       const list: any[] = [];
@@ -90,7 +41,7 @@ export class AmateurHockeyBotLNSkutecClient extends AmateurHockeyBotClient {
         );
         const datetime = coerceDate(this.getTextAndTrim(
           item.querySelector('td.data-date date')
-        ), 'matchlist');
+        ), 'lnskutec-matchlist');
 
         list.push({
           id,
@@ -112,10 +63,10 @@ export class AmateurHockeyBotLNSkutecClient extends AmateurHockeyBotClient {
   }
 
   public async match(
-    spEvent: string
-  ): Promise<AmateurHockeyBotResponse<LNSkutecMatch>> {
+    id: string
+  ): Promise<AmateurHockeyBotMatchResponse> {
     try {
-      const html = await this.fetchPage(this.matchListUrl(spEvent));
+      const html = await this.fetchPage(this.matchListUrl(id));
       const virtualNode = this.nodeDOM(html);
 
       const details = 'main .sp-template.sp-template-event-details';
@@ -130,7 +81,7 @@ export class AmateurHockeyBotLNSkutecClient extends AmateurHockeyBotClient {
         )
       );
 
-      const datetime = coerceDate(`${date} ${time}`, 'match');
+      const datetime = coerceDate(`${date} ${time}`, 'lnskutec-match');
 
       const competition = this.getTextAndTrim(
         virtualNode.querySelector(
@@ -291,7 +242,7 @@ export class AmateurHockeyBotLNSkutecClient extends AmateurHockeyBotClient {
   private parsePlayers(
     virtualNode: Document,
     selector: string
-  ): LNSkutecPlayer[] {
+  ): AmateurHockeyBotMatchPlayer[] {
     const playersItems = this.selectArray(virtualNode, selector);
     const players = [];
     for (const item of playersItems) {

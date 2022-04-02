@@ -33,7 +33,7 @@ yarn add amateurhockeybot
 _Type this into your ts file._
 
 ```terminal
-import { lnskutec } from 'amateurhockeybot';
+import { chhl, lnskutec } from 'amateurhockeybot';
 
 console.log(lnskutec.matchListUrl('2925')); // show url
 
@@ -44,6 +44,16 @@ console.log(lnskutec.matchUrl('62')); // show url
 
 lnskutec.match('62')
   .then(res => console.log(res));
+
+console.log(chhl.matchListUrl('1')); // show url
+
+chhl.matchList('1')
+  .then(res => console.log(res));
+
+console.log(chhl.matchUrl('1')); // show url
+
+chhl.match('1')
+  .then(res => console.log(res));
 ```
 
 ## Sources
@@ -51,6 +61,7 @@ lnskutec.match('62')
 | Source       | Speed  | Stability |
 | ------------ | ------ | --------- |
 | **lnskutec** | 🏒🏒🏒 | 🏒🏒🏒    |
+| **chhl**     | 🏒🏒🏒 | 🏒🏒🏒    |
 
 ## License
 

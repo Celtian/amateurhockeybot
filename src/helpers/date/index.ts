@@ -1,20 +1,5 @@
 import * as moment from 'moment-timezone';
 
-const MONTH_NUMBER: { [key: string]: number } = {
-  '01': 1,
-  '02': 2,
-  '03': 3,
-  '04': 4,
-  '05': 5,
-  '06': 6,
-  '07': 7,
-  '08': 8,
-  '09': 9,
-  '10': 10,
-  '11': 11,
-  '12': 12
-};
-
 const appendZeroIfNeeded = (value: number): string => {
   return `${value < 10 ? '0' + value : value}`;
 }
@@ -52,14 +37,24 @@ const corceDateByRegExp = (date: string, regExp: RegExp, months?: { [key: string
   return moment.tz(localDate, 'Europe/Prague').toISOString();
 };
 
-export const coerceDate = (date: string, type: 'match' | 'matchlist'): string => {
+export type CoerceDateType =
+  'lnskutec-match' |
+  'lnskutec-matchlist' |
+  'chhl-match' |
+  'chhl-matchlist';
+
+export const coerceDate = (date: string, type: CoerceDateType): string => {
   let regExp: RegExp;
   switch (type) {
-    case 'match':
+    case 'lnskutec-match':
       regExp = new RegExp('(?<day>\\d{1,2})\.(?<month>\\d{1,2})\.(?<year>\\d{4})\\s(?<hour>[0-1]?[0-9]|2[0-3]):(?<minute>\\d{1,2})');
       return corceDateByRegExp(date, regExp);
-    case 'matchlist':
+    case 'lnskutec-matchlist':
       regExp = new RegExp('(?<year>\\d{4})-(?<month>\\d{2})-(?<day>\\d{2})\\s(?<hour>\\d{2}):(?<minute>\\d{2}):\\d{2}');
+      return corceDateByRegExp(date, regExp);
+    case 'chhl-matchlist':
+    case 'chhl-match':
+      regExp = new RegExp('(?<day>\\d{2})\\.(?<month>\\d{2})\\.(?<year>\\d{4})\\s(?<hour>\\d{2}):(?<minute>\\d{2})');
       return corceDateByRegExp(date, regExp);
     default:
       return undefined;
