@@ -1,7 +1,7 @@
 import {
   coercePosition
-} from '../../lib/helpers/position';
-import { AmateurHockeyBotMatchPlayerPosition } from '../../lib/types';
+} from '../../src/helpers/position';
+import { AmateurHockeyBotMatchPlayerPosition } from '../../src/types';
 
 describe('coercePosition', () => {
   it('should return correct value', () => {

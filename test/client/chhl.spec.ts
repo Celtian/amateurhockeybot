@@ -1,4 +1,4 @@
-import { AmateurHockeyBotCHHLClient } from '../../lib/clients';
+import { AmateurHockeyBotCHHLClient } from '../../src/clients';
 import { MATCH_DATA, MATCH_HTML } from '../mocks/chhl/match';
 import { MATCH_LIST_DATA, MATCH_LIST_HTML } from '../mocks/chhl/match-list';
 

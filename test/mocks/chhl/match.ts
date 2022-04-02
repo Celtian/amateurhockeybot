@@ -1,4 +1,4 @@
-import { AmateurHockeyBotMatchPlayerPosition, AmateurHockeyBotMatchResponse } from '../../../lib/types';
+import { AmateurHockeyBotMatchPlayerPosition, AmateurHockeyBotMatchResponse } from '../../../src/types';
 
 export const MATCH_HTML = `
 

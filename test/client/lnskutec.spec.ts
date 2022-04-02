@@ -1,4 +1,4 @@
-import { AmateurHockeyBotLNSkutecClient } from '../../lib/clients/lnskutec';
+import { AmateurHockeyBotLNSkutecClient } from '../../src/clients/lnskutec';
 import { MATCH_DATA, MATCH_HTML } from '../mocks/lnskutec/match';
 import { MATCH_LIST_DATA, MATCH_LIST_HTML } from '../mocks/lnskutec/match-list';
 

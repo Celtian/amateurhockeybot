@@ -1,4 +1,4 @@
-import { AmateurHockeyBotMatchResponse } from '../../../lib/types';
+import { AmateurHockeyBotMatchResponse } from '../../../src/types';
 
 export const MATCH_HTML = `
 <!DOCTYPE html>

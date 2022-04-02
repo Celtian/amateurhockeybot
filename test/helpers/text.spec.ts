@@ -1,7 +1,7 @@
 
 import {
   capitalize
-} from '../../lib/helpers/text';
+} from '../../src/helpers/text';
 
 describe('capitalize', () => {
   it('should return correct value', () => {

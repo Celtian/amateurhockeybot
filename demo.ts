@@ -1,5 +1,5 @@
 import { argv } from 'process';
-import { chhl, lnskutec } from './lib';
+import { chhl, lnskutec } from './src';
 
 const selector = argv[2];
 

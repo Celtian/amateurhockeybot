@@ -1,4 +1,4 @@
-import { coerceDate } from '../../lib/helpers/date';
+import { coerceDate } from '../../src/helpers/date';
 
 describe('coerceDate', () => {
   describe('lnskutec match', () => {
