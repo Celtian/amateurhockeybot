@@ -1,5 +1,4 @@
-import { LNSkutecMatch } from '../../../lib/clients/lnskutec';
-import { AmateurHockeyBotResponse } from '../../../lib/shared/interfaces';
+import { AmateurHockeyBotMatchResponse } from '../../../lib/types';
 
 export const MATCH_HTML = `
 <!DOCTYPE html>
@@ -965,7 +964,7 @@ var vars = {"map_type":"ROADMAP","zoom":"20"};
 </html>
 `;
 
-export const MATCH_DATA: AmateurHockeyBotResponse<LNSkutecMatch> = {
+export const MATCH_DATA: AmateurHockeyBotMatchResponse = {
   ok: true,
   data: {
     info: {

@@ -1,6 +1,6 @@
 import fetch from 'cross-fetch';
 import jsdom from 'jsdom';
-import { AmateurHockeyBotPlayer, AmateurHockeyBotResponse, AmateurHockeyBotTeam } from '../../shared/interfaces';
+import { AmateurHockeyBotMatchListResponse, AmateurHockeyBotMatchResponse } from '../../types';
 
 const USER_AGENTS: string[] = [
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36',
@@ -10,6 +10,15 @@ const USER_AGENTS: string[] = [
 ];
 
 export abstract class AmateurHockeyBotClient {
+
+  public abstract matchListUrl(id: string): string;
+
+  public abstract matchUrl(id: string): string;
+
+  public abstract matchList(id: string): Promise<AmateurHockeyBotMatchListResponse>;
+
+  public abstract match(id: string): Promise<AmateurHockeyBotMatchResponse>;
+
   protected async fetchPage(url: string): Promise<string> {
     try {
       const headers = {

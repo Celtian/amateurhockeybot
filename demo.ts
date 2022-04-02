@@ -1,5 +1,5 @@
 import { argv } from 'process';
-import { lnskutec } from './lib';
+import { chhl, lnskutec } from './lib';
 
 const selector = argv[2];
 
@@ -13,6 +13,15 @@ const lnskutecDemo = async (): Promise<void> => {
   console.log(await lnskutec.match('3246'));
 };
 
+const chhlDemo = async (): Promise<void> => {
+  console.log('🏒🏒🏒 CHHL demo 🏒🏒🏒');
+
+  console.log(chhl.matchListUrl('1'));
+  console.log(await chhl.matchList('1'));
+
+  console.log(chhl.matchUrl('1'));
+  console.log(await chhl.match('1'));
+}
 
 // tslint:disable-next-line: no-shadowed-variable
 const main = async (selector: string): Promise<void> => {
@@ -20,8 +29,12 @@ const main = async (selector: string): Promise<void> => {
     case 'lnskutec':
       await lnskutecDemo();
       break;
+    case 'chhl':
+      await chhlDemo();
+      break;
     default:
       await lnskutecDemo();
+      await chhlDemo();
       break;
   }
 };

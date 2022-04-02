@@ -1,5 +1,4 @@
-import { LNSkutecMatchList } from '../../../lib/clients/lnskutec';
-import { AmateurHockeyBotResponse } from '../../../lib/shared/interfaces';
+import { AmateurHockeyBotMatchListResponse } from '../../../lib/types';
 
 export const MATCH_LIST_HTML = `
 <!DOCTYPE html>
@@ -771,7 +770,7 @@ var localized_strings = {"days":"dny","hrs":"hodiny","mins":"minuty","secs":"sek
 </html>
 `;
 
-export const MATCH_LIST_DATA: AmateurHockeyBotResponse<LNSkutecMatchList[]> = {
+export const MATCH_LIST_DATA: AmateurHockeyBotMatchListResponse = {
   ok: true,
   data: [
     {
