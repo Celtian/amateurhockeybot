@@ -1,3 +1,4 @@
+import parse, { HTMLElement } from 'node-html-parser';
 import { capitalize, coerceDate, coerceJerseyNumber, coercePoints, coercePosition, coerceScore } from '../../helpers';
 import { AmateurHockeyBotMatchListResponse, AmateurHockeyBotMatchPlayer, AmateurHockeyBotMatchPlayerPosition, AmateurHockeyBotMatchResponse } from '../../types';
 import { AmateurHockeyBotClient } from '../shared';
@@ -17,29 +18,21 @@ export class AmateurHockeyBotCHHLClient extends AmateurHockeyBotClient {
     id: string
   ): Promise<AmateurHockeyBotMatchListResponse> {
     try {
-      const html = await this.fetchPage(this.matchListUrl(id));
-      const virtualNode = this.nodeDOM(html);
-      const items = this.selectArray(virtualNode, '#content > table > tbody > tr:not(:first-child)');
+      const html = parse(await this.fetchPage(this.matchListUrl(id)));
+
+      // const items = html.querySelectorAll('#content > table > tbody > tr:not(:first-child)');
+      const items = html.querySelectorAll('#content > table tr:not(:first-child)');
       const list: any[] = [];
 
       for (const item of items) {
-        const date = this.getTextAndTrim(
-          item.querySelector('td:nth-child(2)')
-        );
+        const date = item.querySelector('td:nth-child(2)')?.text?.trim();
 
         if (date) {
-          const time = this.getTextAndTrim(
-            item.querySelector('td:nth-child(3)')
-          );
-          const teamHome = this.getTextAndTrim(
-            item.querySelector('td:nth-child(4)')
-          );
-          const teamAway = this.getTextAndTrim(
-            item.querySelector('td:nth-child(5)')
-          );
-
+          const time = item.querySelector('td:nth-child(3)')?.text?.trim();
+          const teamHome = item.querySelector('td:nth-child(4)')?.text?.trim();
+          const teamAway = item.querySelector('td:nth-child(5)')?.text?.trim();
           const link = item.querySelector('td:nth-child(6) > a');
-          const id = this.getAttributeAndTrim(link, 'href').replace(
+          const id = link.getAttribute('href').trim().replace(
             /^\?report=/,
             ''
           );;
@@ -68,41 +61,39 @@ export class AmateurHockeyBotCHHLClient extends AmateurHockeyBotClient {
     id: string
   ): Promise<AmateurHockeyBotMatchResponse> {
     try {
-      const html = await this.fetchPage(this.matchUrl(id));
-      const virtualNode = this.nodeDOM(html);
+      const html = parse(await this.fetchPage(this.matchUrl(id)));
 
-      const headTable = '#content > table:nth-child(2) > tbody > tr';
+      // const headTable = '#content > table:nth-child(2) > tbody > tr';
+      const headTable = '#content > table:nth-child(2) tr';
 
-      const teamHome = this.getTextAndTrim(
-        virtualNode.querySelector(
-          `${headTable} > td:nth-child(1)`
-        )
-      );
+      const teamHome = html.querySelector(
+        `${headTable} > td:nth-child(1)`
+      )?.text?.trim();
 
-      const teamAway = this.getTextAndTrim(
-        virtualNode.querySelector(
-          `${headTable} > td:nth-child(3)`
-        )
-      );
+      const teamAway = html.querySelector(
+        `${headTable} > td:nth-child(3)`
+      )?.text?.trim();
 
-      const score = this.getTextAndTrim(
-        virtualNode.querySelector(
-          `${headTable} > td:nth-child(2)`
-        )
-      );
+      const score = html.querySelector(
+        `${headTable} > td:nth-child(2)`
+      )?.text?.trim();
 
       const results = this.parseScore(score);
 
-      const dateTimeHeader = this.getTextAndTrim(
-        virtualNode.querySelector(
-          '#content > table:nth-child(4) > tbody > tr:nth-child(1) > th'
-        )
-      );
+      const dateTimeHeader = html.querySelector(
+        // '#content > table:nth-child(4) > tbody > tr:nth-child(1) > th'
+        '#content > table:nth-child(4) tr:nth-child(1) > th'
+      )?.text?.trim();
 
       const datetime = this.parseDatetimeHeader(dateTimeHeader);
 
-      const homePlayers = this.parsePlayers(virtualNode, '#content > div:nth-child(5) > table:nth-child(1) > tbody > tr');
-      const awayPlayers = this.parsePlayers(virtualNode, '#content > div:nth-child(5) > table:nth-child(2) > tbody > tr');
+      /*
+      const homePlayers = this.parsePlayers(html.querySelectorAll('#content > div:nth-child(5) > table:nth-child(1) > tbody > tr'));
+      const awayPlayers = this.parsePlayers(html.querySelectorAll('#content > div:nth-child(5) > table:nth-child(2) > tbody > tr'));
+      */
+
+      const homePlayers = this.parsePlayers(html.querySelectorAll('#content > div:nth-child(5) > table:nth-child(1) tr'));
+      const awayPlayers = this.parsePlayers(html.querySelectorAll('#content > div:nth-child(5) > table:nth-child(2) tr'));
 
       return {
         ok: true,
@@ -173,25 +164,23 @@ export class AmateurHockeyBotCHHLClient extends AmateurHockeyBotClient {
   }
 
   private parsePlayers(
-    virtualNode: Document,
-    selector: string
+    playersItems: HTMLElement[]
   ): AmateurHockeyBotMatchPlayer[] {
-    const playersItems = this.selectArray(virtualNode, selector);
     const players = [];
     for (const item of playersItems) {
-      const jerseyNumber = coerceJerseyNumber(this.getTextAndTrim(item.querySelector('td:nth-child(1)')));
+      const jerseyNumber = coerceJerseyNumber(item.querySelector('td:nth-child(1)')?.text?.trim());
 
       if (jerseyNumber) {
 
-        const position = coercePosition(this.getTextAndTrim(item.querySelector('td:nth-child(2)')));
-        const name = capitalize(this.getTextAndTrim(item.querySelector('td:nth-child(3)')));
+        const position = coercePosition(item.querySelector('td:nth-child(2)')?.text?.trim());
+        const name = capitalize(item.querySelector('td:nth-child(3)')?.text?.trim());
 
         let goals = 0;
         let assists = 0;
 
         if (position === AmateurHockeyBotMatchPlayerPosition.ATTACKER || position === AmateurHockeyBotMatchPlayerPosition.DEFENDER) {
-          goals = coercePoints(this.getTextAndTrim(item.querySelector('td:nth-child(4)')));
-          assists = coercePoints(this.getTextAndTrim(item.querySelector('td:nth-child(5)')));
+          goals = coercePoints(item.querySelector('td:nth-child(4)')?.text?.trim());
+          assists = coercePoints(item.querySelector('td:nth-child(5)')?.text?.trim());
         }
 
         players.push({

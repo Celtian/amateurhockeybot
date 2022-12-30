@@ -1,3 +1,4 @@
+import parse, { HTMLElement } from 'node-html-parser';
 import {
   coerceDate,
   coerceJerseyNumber,
@@ -23,25 +24,20 @@ export class AmateurHockeyBotLNSkutecClient extends AmateurHockeyBotClient {
     id: string
   ): Promise<AmateurHockeyBotMatchListResponse> {
     try {
-      const html = await this.fetchPage(this.matchListUrl(id));
-      const virtualNode = this.nodeDOM(html);
-      const items = this.selectArray(virtualNode, 'main table > tbody > tr');
+      const html = parse(await this.fetchPage(this.matchListUrl(id)));
+      const items = html.querySelectorAll('main table > tbody > tr');
       const list: any[] = [];
       for (const item of items) {
         const link = item.querySelector('td.data-time > a');
-        const id = this.getAttributeAndTrim(link, 'href').replace(
+        const id = link.getAttribute('href').trim().replace(
           /^\?sp_event=/,
           ''
         );
-        const teamHome = this.getTextAndTrim(
-          item.querySelector('td.data-home')
-        );
-        const teamAway = this.getTextAndTrim(
-          item.querySelector('td.data-away')
-        );
-        const datetime = coerceDate(this.getTextAndTrim(
-          item.querySelector('td.data-date date')
-        ), 'lnskutec-matchlist');
+        const teamHome = item.querySelector('td.data-home')?.text?.trim();
+        const teamAway = item.querySelector('td.data-away')?.text?.trim();
+        const datetime = coerceDate(
+          item.querySelector('td.data-date date')?.text?.trim()
+          , 'lnskutec-matchlist');
 
         list.push({
           id,
@@ -66,141 +62,111 @@ export class AmateurHockeyBotLNSkutecClient extends AmateurHockeyBotClient {
     id: string
   ): Promise<AmateurHockeyBotMatchResponse> {
     try {
-      const html = await this.fetchPage(this.matchListUrl(id));
-      const virtualNode = this.nodeDOM(html);
+      const html = parse(await this.fetchPage(this.matchListUrl(id)));
 
       const details = 'main .sp-template.sp-template-event-details';
-      const date = this.getTextAndTrim(
-        virtualNode.querySelector(
-          `${details} table > tbody > tr > td:nth-child(1)`
-        )
-      );
-      const time = this.getTextAndTrim(
-        virtualNode.querySelector(
-          `${details} table > tbody > tr > td:nth-child(2)`
-        )
-      );
+
+      const date = html.querySelector(
+        `${details} table > tbody > tr > td:nth-child(1)`
+      )?.text?.trim();
+
+      const time = html.querySelector(
+        `${details} table > tbody > tr > td:nth-child(2)`
+      )?.text?.trim();
 
       const datetime = coerceDate(`${date} ${time}`, 'lnskutec-match');
 
-      const competition = this.getTextAndTrim(
-        virtualNode.querySelector(
-          `${details} table > tbody > tr > td:nth-child(3)`
-        )
-      );
-      const season = this.getTextAndTrim(
-        virtualNode.querySelector(
-          `${details} table > tbody > tr > td:nth-child(4)`
-        )
-      );
+      const competition = html.querySelector(
+        `${details} table > tbody > tr > td:nth-child(3)`
+      )?.text?.trim();
 
-      const teamHome = this.getTextAndTrim(
-        virtualNode.querySelector(
-          `main .sp-template.sp-template-event-performance:nth-child(1) .sp-table-caption`
-        )
-      );
-      const teamAway = this.getTextAndTrim(
-        virtualNode.querySelector(
-          `main .sp-template.sp-template-event-performance:nth-child(2) .sp-table-caption`
-        )
-      );
+      const season = html.querySelector(
+        `${details} table > tbody > tr > td:nth-child(4)`
+      )?.text?.trim();
+
+      const teamHome = html.querySelector(
+        `main .sp-template.sp-template-event-performance:nth-child(1) .sp-table-caption`
+      )?.text?.trim();
+
+      const teamAway = html.querySelector(
+        `main .sp-template.sp-template-event-performance:nth-child(2) .sp-table-caption`
+      )?.text?.trim();
 
       const results = 'main .sp-template.sp-template-event-results';
+
       const scoreTotalHome = coerceScore(
-        this.getTextAndTrim(
-          virtualNode.querySelector(
-            `${results} table > tbody > tr:nth-child(1) > td.data-goals`
-          )
-        )
+        html.querySelector(
+          `${results} table > tbody > tr:nth-child(1) > td.data-goals`
+        )?.text?.trim()
       );
+
       const scoreTotalAway = coerceScore(
-        this.getTextAndTrim(
-          virtualNode.querySelector(
-            `${results} table > tbody > tr:nth-child(2) > td.data-goals`
-          )
-        )
+        html.querySelector(
+          `${results} table > tbody > tr:nth-child(2) > td.data-goals`
+        )?.text?.trim()
       );
 
       const scorePeriodFirstHome = coerceScore(
-        this.getTextAndTrim(
-          virtualNode.querySelector(
-            `${results} table > tbody > tr:nth-child(2) > td.data-first`
-          )
-        )
+        html.querySelector(
+          `${results} table > tbody > tr:nth-child(2) > td.data-first`
+        )?.text?.trim()
       );
+
       const scorePeriodFirstAway = coerceScore(
-        this.getTextAndTrim(
-          virtualNode.querySelector(
-            `${results} table > tbody > tr:nth-child(2) > td.data-first`
-          )
-        )
+        html.querySelector(
+          `${results} table > tbody > tr:nth-child(2) > td.data-first`
+        )?.text?.trim()
       );
 
       const scorePeriodSecondHome = coerceScore(
-        this.getTextAndTrim(
-          virtualNode.querySelector(
-            `${results} table > tbody > tr:nth-child(2) > td.data-second`
-          )
-        )
+        html.querySelector(
+          `${results} table > tbody > tr:nth-child(2) > td.data-second`
+        )?.text?.trim()
       );
+
       const scorePeriodSecondAway = coerceScore(
-        this.getTextAndTrim(
-          virtualNode.querySelector(
-            `${results} table > tbody > tr:nth-child(2) > td.data-second`
-          )
-        )
+        html.querySelector(
+          `${results} table > tbody > tr:nth-child(2) > td.data-second`
+        )?.text?.trim()
       );
 
       const scorePeriodThirdHome = coerceScore(
-        this.getTextAndTrim(
-          virtualNode.querySelector(
-            `${results} table > tbody > tr:nth-child(2) > td.data-third`
-          )
-        )
+        html.querySelector(
+          `${results} table > tbody > tr:nth-child(2) > td.data-third`
+        )?.text?.trim()
       );
+
       const scorePeriodThirdAway = coerceScore(
-        this.getTextAndTrim(
-          virtualNode.querySelector(
-            `${results} table > tbody > tr:nth-child(2) > td.data-third`
-          )
-        )
+        html.querySelector(
+          `${results} table > tbody > tr:nth-child(2) > td.data-third`
+        )?.text?.trim()
       );
 
       const scoreOvertimeHome = coerceScore(
-        this.getTextAndTrim(
-          virtualNode.querySelector(
-            `${results} table > tbody > tr:nth-child(1) > td.data-overtime`
-          )
-        )
+        html.querySelector(
+          `${results} table > tbody > tr:nth-child(1) > td.data-overtime`
+        )?.text?.trim()
       );
 
       const scoreOvertimeAway = coerceScore(
-        this.getTextAndTrim(
-          virtualNode.querySelector(
-            `${results} table > tbody > tr:nth-child(2) > td.data-overtime`
-          )
-        )
+        html.querySelector(
+          `${results} table > tbody > tr:nth-child(2) > td.data-overtime`
+        )?.text?.trim()
       );
 
-      const scoreResultHome = this.getTextAndTrim(
-        virtualNode.querySelector(
-          `${results} table > tbody > tr:nth-child(1) > td.data-outcome`
-        )
-      );
+      const scoreResultHome = html.querySelector(
+        `${results} table > tbody > tr:nth-child(1) > td.data-outcome`
+      )?.text?.trim();
 
-      const scoreResultAway = this.getTextAndTrim(
-        virtualNode.querySelector(
-          `${results} table > tbody > tr:nth-child(2) > td.data-outcome`
-        )
-      );
+      const scoreResultAway = html.querySelector(
+        `${results} table > tbody > tr:nth-child(2) > td.data-outcome`
+      )?.text?.trim();
 
       const homePlayers = this.parsePlayers(
-        virtualNode,
-        'main .sp-template.sp-template-event-performance:nth-child(1) table tbody tr'
+        html.querySelectorAll('main .sp-template.sp-template-event-performance:nth-child(1) table tbody tr')
       );
       const awayPlayers = this.parsePlayers(
-        virtualNode,
-        'main .sp-template.sp-template-event-performance:nth-child(2) table tbody tr'
+        html.querySelectorAll('main .sp-template.sp-template-event-performance:nth-child(2) table tbody tr')
       );
 
       return {
@@ -240,36 +206,34 @@ export class AmateurHockeyBotLNSkutecClient extends AmateurHockeyBotClient {
   }
 
   private parsePlayers(
-    virtualNode: Document,
-    selector: string
+    playersItems: HTMLElement[]
   ): AmateurHockeyBotMatchPlayer[] {
-    const playersItems = this.selectArray(virtualNode, selector);
     const players = [];
     for (const item of playersItems) {
       const jerseyNumber = coerceJerseyNumber(
-        this.getTextAndTrim(item.querySelector('td.data-number'))
+        item.querySelector('td.data-number')?.text?.trim()
       );
-      const name = this.getTextAndTrim(item.querySelector('td.data-name'));
+      const name = item.querySelector('td.data-name')?.text?.trim();
       const goals = coercePoints(
-        this.getTextAndTrim(item.querySelector('td.data-g'))
+        item.querySelector('td.data-g')?.text?.trim()
       );
       const assists = coercePoints(
-        this.getTextAndTrim(item.querySelector('td.data-a'))
+        item.querySelector('td.data-a')?.text?.trim()
       );
       const penalty2 = coerceMinutes(
-        this.getTextAndTrim(item.querySelector('td.data-tm'))
+        item.querySelector('td.data-tm')?.text?.trim()
       );
       const penalty4 = coerceMinutes(
-        this.getTextAndTrim(item.querySelector('td.data-dm'))
+        item.querySelector('td.data-dm')?.text?.trim()
       );
       const penalty5ok = coerceMinutes(
-        this.getTextAndTrim(item.querySelector('td.data-fiveok'))
+        item.querySelector('td.data-fiveok')?.text?.trim()
       );
       const penalty10 = coerceMinutes(
-        this.getTextAndTrim(item.querySelector('td.data-osobnitrest'))
+        item.querySelector('td.data-osobnitrest')?.text?.trim()
       );
       const penaltyok = coerceMinutes(
-        this.getTextAndTrim(item.querySelector('td.data-ok'))
+        item.querySelector('td.data-ok')?.text?.trim()
       );
       players.push({
         name,
