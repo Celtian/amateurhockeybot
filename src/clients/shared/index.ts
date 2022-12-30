@@ -1,5 +1,4 @@
 import fetch from 'cross-fetch';
-import jsdom from 'jsdom';
 import { AmateurHockeyBotMatchListResponse, AmateurHockeyBotMatchResponse } from '../../types';
 
 const USER_AGENTS: string[] = [
@@ -33,25 +32,5 @@ export abstract class AmateurHockeyBotClient {
       console.error(e);
       return 'Error';
     }
-  }
-
-  protected nodeDOM(response: string): Document {
-    const { JSDOM } = jsdom;
-    return new JSDOM(response).window.document;
-  }
-
-  protected selectArray(
-    element: Document | HTMLDivElement | HTMLTableSectionElement,
-    selector: string
-  ): HTMLTableRowElement[] {
-    return [].slice.call(element.querySelectorAll(selector));
-  }
-
-  protected getTextAndTrim(element: Element): string {
-    return element && element.textContent ? element.textContent.trim() : undefined;
-  }
-
-  protected getAttributeAndTrim(element: Element, attribute: string): string {
-    return element.getAttribute(attribute)?.trim();
   }
 }
