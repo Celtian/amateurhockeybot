@@ -23,7 +23,6 @@ const chhlDemo = async (): Promise<void> => {
   console.log(await chhl.match('1'));
 }
 
-// tslint:disable-next-line: no-shadowed-variable
 const main = async (selector: string): Promise<void> => {
   switch (selector) {
     case 'lnskutec':
@@ -39,5 +38,4 @@ const main = async (selector: string): Promise<void> => {
   }
 };
 
-// tslint:disable-next-line: no-floating-promises
 main(selector);
