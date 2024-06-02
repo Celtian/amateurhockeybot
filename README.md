@@ -14,7 +14,7 @@
 
 > Library for scraping hockey data from the internet
 
-## Install
+## 🛠️ Install
 
 _Nodejs 12 or higher need to be installed first_
 
@@ -28,7 +28,7 @@ or
 yarn add amateurhockeybot
 ```
 
-## Quick start
+## 🚀 Quick start
 
 _Type this into your ts file._
 
@@ -56,16 +56,16 @@ chhl.match('1')
   .then(res => console.log(res));
 ```
 
-## Sources
+## 🛠️ Sources
 
 | Source       | Speed  | Stability |
 | ------------ | ------ | --------- |
 | **lnskutec** | 🏒🏒🏒 | 🏒🏒🏒    |
 | **chhl**     | 🏒🏒🏒 | 🏒🏒🏒    |
 
-## License
+## 🪪 License
 
-Copyright &copy; 2022 - 2023 [Dominik Hladik](https://github.com/Celtian)
+Copyright &copy; 2022 - 2024 [Dominik Hladik](https://github.com/Celtian)
 
 All contents are licensed under the [MIT license].
 
